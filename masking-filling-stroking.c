@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <unistd.h>
 #include <GL/gl.h>
 #include <GL/glx.h>
 #include <stdio.h>
@@ -87,10 +88,8 @@ int main(int argc, char *argv[])
     XSetWindowAttributes  swa;
     GLXFBConfig          *fbConfigs;
     GLXContext            context;
-    GLXWindow             glxWin;
     int                   swaMask;
     int                   numReturned;
-    int                   swapFlag = True;
 
     /* Use the MSAA compositor if it's available. */
     setenv("CAIRO_GL_COMPOSITOR", "msaa", 1);
@@ -106,7 +105,6 @@ int main(int argc, char *argv[])
 
     if (fbConfigs == NULL) {
         fbConfigs = glXChooseFBConfig(dpy, DefaultScreen(dpy), singleSampleAttributes, &numReturned);
-        swapFlag = False;
     }
 
     if (fbConfigs == NULL) {
