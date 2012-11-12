@@ -139,16 +139,14 @@ void renderOperators(cairo_surface_t* surface)
 
 int main(int argc, char *argv[])
 {
-    Window window;
-    GLXContext glxContext;
-    createWindowAndGLXContext(gSize, gSize, &window, &glxContext);
-    showWindow(window);
-
     /* Use the MSAA compositor if it's available. */
     setenv("CAIRO_GL_COMPOSITOR", "msaa", 1);
 
-    cairo_device_t* device = cairo_glx_device_create(getDisplay(), glxContext);
-    cairo_surface_t* windowSurface = cairo_gl_surface_create_for_window(device, window, gSize, gSize);
+    Window window;
+    cairo_device_t* device;
+    cairo_surface_t* windowSurface;
+    createAndShowWindow(gSize, gSize, &window, &device, &windowSurface);
+
     cairo_surface_t* textureSurface = cairo_gl_surface_create(device, CAIRO_CONTENT_COLOR_ALPHA, gSize, gSize);
 
     while (1) {

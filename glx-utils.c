@@ -43,7 +43,11 @@ static int singleSampleAttributes[] = {
     None
 };
 
-void createWindowAndGLXContext(int width, int height, Window* window, GLXContext* glxContext)
+static Bool waitForNotify(Display *dpy, XEvent *event, XPointer arg) {
+    return (event->type == MapNotify) && (event->xmap.window == (Window) arg);
+}
+
+void createAndShowWindow(int width, int height, Window* window, cairo_device_t** cairoDevice, cairo_surface_t** windowSurface)
 {
     Display* display = getDisplay();
 
@@ -72,18 +76,13 @@ void createWindowAndGLXContext(int width, int height, Window* window, GLXContext
                             CWBorderPixel | CWColormap | CWEventMask, &windowAttributes);
 
     /* Create a GLX context for OpenGL rendering */
-    *glxContext = glXCreateNewContext(display, fbConfigs[0], GLX_RGBA_TYPE, NULL, True);
-}
+    GLXContext glxContext = glXCreateNewContext(display, fbConfigs[0], GLX_RGBA_TYPE, NULL, True);
 
-static Bool waitForNotify(Display *dpy, XEvent *event, XPointer arg) {
-    return (event->type == MapNotify) && (event->xmap.window == (Window) arg);
-}
-
-void showWindow(Window window)
-{
     /* Map the window to the screen, and wait for it to appear */
     XEvent event;
-    XMapWindow(getDisplay(), window);
-    XIfEvent(getDisplay(), &event, waitForNotify, (XPointer) window);
+    XMapWindow(getDisplay(), *window);
+    XIfEvent(getDisplay(), &event, waitForNotify, (XPointer) *window);
 
+    *cairoDevice = cairo_glx_device_create(getDisplay(), glxContext);
+    *windowSurface = cairo_gl_surface_create_for_window(*cairoDevice, *window, width, height);
 }
