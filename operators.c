@@ -1,4 +1,4 @@
-#include "glx-utils.h"
+#include "gl-utils.h"
 #include <cairo.h>
 #include <cairo-gl.h>
 #include <stdio.h>
@@ -6,7 +6,6 @@
 #include <math.h>
 #include <unistd.h>
 #include <GL/gl.h>
-#include <GL/glx.h>
 
 const int gSize = 500;
 
